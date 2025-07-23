@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Wallet, ExternalLink, Zap, Users, Clock } from "lucide-react"
+import WalletConnectButton from "@/components/WalletConnect"
 
 // Extend window type to support Farcaster Mini-App
 declare global {
@@ -25,18 +26,8 @@ interface MintData {
   maxSupply: number
 }
 
-interface WalletState {
-  connected: boolean
-  address: string
-  balance: string
-}
-
 export default function CreativOpsMint() {
-  const [wallet, setWallet] = useState<WalletState>({
-    connected: false,
-    address: "",
-    balance: "0",
-  })
+
 
   const [mintData, setMintData] = useState<MintData>({
     price: "0.1 MON",
@@ -70,70 +61,43 @@ export default function CreativOpsMint() {
     return () => clearInterval(interval)
   }, [])
 
-  const connectWallet = async () => {
-    setMintStatus("Connecting wallet...")
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    setWallet({
-      connected: true,
-      address: "0x1234...5678",
-      balance: "1.4321",
-    })
-
-    setMintData((prev) => ({
-      ...prev,
-      userBalance: "1.4321 MON",
-      userMints: "2 / 10",
-    }))
-
-    setMintStatus("Wallet connected!")
-    setTimeout(() => setMintStatus(""), 3000)
-  }
-
-  const disconnectWallet = () => {
-    setWallet({ connected: false, address: "", balance: "0" })
-    setMintData((prev) => ({
-      ...prev,
-      userBalance: "0 MON",
-      userMints: "0 / 10",
-    }))
-    setMintStatus("Wallet disconnected")
-    setTimeout(() => setMintStatus(""), 3000)
-  }
-
   const handleMint = async () => {
-    if (!wallet.connected) {
-      setMintStatus("Please connect your wallet first")
-      setTimeout(() => setMintStatus(""), 3000)
-      return
-    }
+    // if (!wallet.connected) {
+    //   setMintStatus("Please connect your wallet first")
+    //   setTimeout(() => setMintStatus(""), 3000)
+    //   return
+    // }
 
-    setIsMinting(true)
-    setMintStatus("Preparing transaction...")
+    // setIsMinting(true)
+    // setMintStatus("Preparing transaction...")
 
-    try {
-      await new Promise((r) => setTimeout(r, 1000))
-      setMintStatus("Confirming transaction...")
-      await new Promise((r) => setTimeout(r, 2000))
-      setMintStatus("Minting your NFT...")
-      await new Promise((r) => setTimeout(r, 2000))
+    // try {
+    //   // Simulate transaction steps
+    //   await new Promise((resolve) => setTimeout(resolve, 1000))
+    //   setMintStatus("Confirming transaction...")
 
-      setMintData((prev) => ({
-        ...prev,
-        totalSupply: prev.totalSupply + 1,
-        remaining: `${prev.maxSupply - (prev.totalSupply + 1)} / ${prev.maxSupply}`,
-        userMints: "3 / 10",
-        userBalance: "1.3321 MON",
-      }))
+    //   await new Promise((resolve) => setTimeout(resolve, 2000))
+    //   setMintStatus("Minting your CreativOps NFT...")
 
-      setMintStatus("🎉 Successfully minted CreativOps NFT!")
-      setTimeout(() => setMintStatus(""), 5000)
-    } catch {
-      setMintStatus("❌ Mint failed. Try again.")
-      setTimeout(() => setMintStatus(""), 5000)
-    } finally {
-      setIsMinting(false)
-    }
+    //   await new Promise((resolve) => setTimeout(resolve, 2000))
+
+    //   // Update mint data
+    //   setMintData((prev) => ({
+    //     ...prev,
+    //     remaining: `${10000 - (prev.totalSupply + 1)} / 10000`,
+    //     totalSupply: prev.totalSupply + 1,
+    //     userMints: "3 / 10",
+    //     userBalance: "1.3321 MON",
+    //   }))
+
+    //   setMintStatus("🎉 Successfully minted CreativOps NFT!")
+    //   setTimeout(() => setMintStatus(""), 5000)
+    // } catch (error) {
+    //   setMintStatus("❌ Transaction failed. Please try again.")
+    //   setTimeout(() => setMintStatus(""), 5000)
+    // } finally {
+    //   setIsMinting(false)
+    // }
   }
 
   const progressPercentage = (mintData.totalSupply / mintData.maxSupply) * 100
@@ -208,7 +172,7 @@ export default function CreativOpsMint() {
               </div>
             </div>
 
-            {wallet.connected && (
+            {/* {wallet.connected && (
               <div className="grid grid-cols-2 gap-4 pt-4 border-t border-purple-500/20">
                 <div className="text-center">
                   <p className="text-lg font-semibold text-green-400">{mintData.userMints}</p>
@@ -219,12 +183,12 @@ export default function CreativOpsMint() {
                   <p className="text-xs text-gray-400">Your Balance</p>
                 </div>
               </div>
-            )}
+            )} */}
           </CardContent>
         </Card>
 
         {/* Mint Button */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <Button
             onClick={handleMint}
             disabled={isMinting || !wallet.connected}
@@ -241,48 +205,22 @@ export default function CreativOpsMint() {
               "Connect Wallet to Mint"
             )}
           </Button>
-        </div>
+        </div> */}
 
-        {/* Wallet Info */}
-        <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
-          <CardContent className="p-4">
-            {wallet.connected ? (
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse" />
-                  <span className="text-sm font-mono">{wallet.address}</span>
-                </div>
-                <Button
-                  onClick={disconnectWallet}
-                  variant="outline"
-                  size="sm"
-                  className="border-purple-500/50 text-purple-300 hover:bg-purple-500/20"
-                >
-                  Disconnect
-                </Button>
-              </div>
-            ) : (
-              <Button
-                onClick={connectWallet}
-                variant="outline"
-                className="w-full border-purple-500/50 text-purple-300 hover:bg-purple-500/20"
-              >
-                <Wallet className="w-4 h-4 mr-2" />
-                Connect Wallet
-              </Button>
-            )}
-          </CardContent>
-        </Card>
+        {/* Wallet Connection */}
+        <WalletConnectButton />
 
         {/* Mint Status */}
-        {mintStatus && (
-          <Card className="bg-black/60 border-purple-500/50 backdrop-blur-sm mb-4">
-            <CardContent className="p-4 flex items-center text-purple-300 text-sm">
-              <Clock className="w-4 h-4 mr-2" />
-              {mintStatus}
-            </CardContent>
-          </Card>
-        )}
+        {
+          mintStatus && (
+            <Card className="bg-black/60 border-purple-500/50 backdrop-blur-sm mb-4">
+              <CardContent className="p-4 flex items-center text-purple-300 text-sm">
+                <Clock className="w-4 h-4 mr-2" />
+                {mintStatus}
+              </CardContent>
+            </Card>
+          )
+        }
 
         <div className="text-center mt-8 text-xs text-gray-500">
           <p>Powered by Monad Testnet</p>
@@ -291,7 +229,7 @@ export default function CreativOpsMint() {
             <span>View on Explorer</span>
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   )
 }
