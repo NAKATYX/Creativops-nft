@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Wallet, ExternalLink, Zap, Users, Clock } from "lucide-react"
 import WalletConnectButton from "@/components/WalletConnect"
 import MintInformation from "@/components/mint-information"
+import ProgressBar from "@/components/progress-bar"
 
 export default function CreativOpsMint() {
 
@@ -123,18 +124,7 @@ export default function CreativOpsMint() {
               </div>
             </div>
 
-            <div className="mb-4">
-              <div className="flex justify-between text-xs text-gray-400 mb-2">
-                <span>Minted</span>
-                <span>{mintData.totalSupply} / {mintData.maxSupply}</span>
-              </div>
-              <div className="w-full bg-gray-800 rounded-full h-2">
-                <div
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${progressPercentage}%` }}
-                />
-              </div>
-            </div>
+            <ProgressBar />
           </CardContent>
         </Card>
 
