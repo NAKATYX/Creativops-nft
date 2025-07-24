@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Wallet, ExternalLink, Zap, Users, Clock } from "lucide-react"
 
-// Extend window type to include farcaster
+// Extend window type to support Farcaster Mini-App
 declare global {
   interface Window {
     farcaster?: {
@@ -48,17 +48,24 @@ export default function CreativOpsMint() {
   })
 
   const [isMinting, setIsMinting] = useState(false)
-  const [mintStatus, setMintStatus] = useState<string>("")
+  const [mintStatus, setMintStatus] = useState("")
 
+  // ✅ Notify Farcaster Mini-App is ready
   useEffect(() => {
-    if (typeof window !== "undefined" && window.farcaster?.actions?.ready) {
-      window.farcaster.actions.ready()
+    const ready = () => {
+      if (typeof window !== "undefined" && window.farcaster?.actions?.ready) {
+        console.log("✅ Farcaster Mini-App ready")
+        window.farcaster.actions.ready()
+      } else {
+        console.warn("⚠️ Farcaster window.farcaster not found")
+      }
     }
+    setTimeout(ready, 0)
   }, [])
 
   const connectWallet = async () => {
     setMintStatus("Connecting wallet...")
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     setWallet({
       connected: true,
@@ -72,7 +79,7 @@ export default function CreativOpsMint() {
       userMints: "2 / 10",
     }))
 
-    setMintStatus("Wallet connected successfully!")
+    setMintStatus("Wallet connected!")
     setTimeout(() => setMintStatus(""), 3000)
   }
 
@@ -98,24 +105,24 @@ export default function CreativOpsMint() {
     setMintStatus("Preparing transaction...")
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise((r) => setTimeout(r, 1000))
       setMintStatus("Confirming transaction...")
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      setMintStatus("Minting your CreativOps NFT...")
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((r) => setTimeout(r, 2000))
+      setMintStatus("Minting your NFT...")
+      await new Promise((r) => setTimeout(r, 2000))
 
       setMintData((prev) => ({
         ...prev,
-        remaining: `${10000 - (prev.totalSupply + 1)} / 10000`,
         totalSupply: prev.totalSupply + 1,
+        remaining: `${prev.maxSupply - (prev.totalSupply + 1)} / ${prev.maxSupply}`,
         userMints: "3 / 10",
         userBalance: "1.3321 MON",
       }))
 
       setMintStatus("🎉 Successfully minted CreativOps NFT!")
       setTimeout(() => setMintStatus(""), 5000)
-    } catch (error) {
-      setMintStatus("❌ Transaction failed. Please try again.")
+    } catch {
+      setMintStatus("❌ Mint failed. Try again.")
       setTimeout(() => setMintStatus(""), 5000)
     } finally {
       setIsMinting(false)
@@ -126,16 +133,15 @@ export default function CreativOpsMint() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black text-white">
+      {/* Background pattern and radial light */}
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black"></div>
-      <div
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%239C92AC' fillOpacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-        }}
-      ></div>
+      <div className="fixed inset-0 pointer-events-none" style={{
+        backgroundImage:
+          "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fillRule='evenodd'%3E%3Cg fill='%239C92AC' fillOpacity='0.05'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+      }} />
 
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-md">
+        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
@@ -153,6 +159,7 @@ export default function CreativOpsMint() {
           </p>
         </div>
 
+        {/* Mint Progress */}
         <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
           <CardContent className="p-6">
             <div className="aspect-square bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-lg mb-4 flex items-center justify-center border border-purple-500/20">
@@ -168,20 +175,19 @@ export default function CreativOpsMint() {
             <div className="mb-4">
               <div className="flex justify-between text-xs text-gray-400 mb-2">
                 <span>Minted</span>
-                <span>
-                  {mintData.totalSupply} / {mintData.maxSupply}
-                </span>
+                <span>{mintData.totalSupply} / {mintData.maxSupply}</span>
               </div>
               <div className="w-full bg-gray-800 rounded-full h-2">
                 <div
                   className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${progressPercentage}%` }}
-                ></div>
+                />
               </div>
             </div>
           </CardContent>
         </Card>
 
+        {/* Mint Data & Balance */}
         <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
           <CardContent className="p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -210,15 +216,16 @@ export default function CreativOpsMint() {
           </CardContent>
         </Card>
 
+        {/* Mint Button */}
         <div className="mb-6">
           <Button
             onClick={handleMint}
             disabled={isMinting || !wallet.connected}
-            className="w-full h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            className="w-full h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isMinting ? (
               <div className="flex items-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
                 Minting...
               </div>
             ) : wallet.connected ? (
@@ -229,19 +236,20 @@ export default function CreativOpsMint() {
           </Button>
         </div>
 
+        {/* Wallet Info */}
         <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
           <CardContent className="p-4">
             {wallet.connected ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse" />
                   <span className="text-sm font-mono">{wallet.address}</span>
                 </div>
                 <Button
                   onClick={disconnectWallet}
                   variant="outline"
                   size="sm"
-                  className="border-purple-500/50 text-purple-300 hover:bg-purple-500/20 bg-transparent"
+                  className="border-purple-500/50 text-purple-300 hover:bg-purple-500/20"
                 >
                   Disconnect
                 </Button>
@@ -250,7 +258,7 @@ export default function CreativOpsMint() {
               <Button
                 onClick={connectWallet}
                 variant="outline"
-                className="w-full border-purple-500/50 text-purple-300 hover:bg-purple-500/20 bg-transparent"
+                className="w-full border-purple-500/50 text-purple-300 hover:bg-purple-500/20"
               >
                 <Wallet className="w-4 h-4 mr-2" />
                 Connect Wallet
@@ -259,13 +267,12 @@ export default function CreativOpsMint() {
           </CardContent>
         </Card>
 
+        {/* Mint Status */}
         {mintStatus && (
-          <Card className="bg-black/60 border-purple-500/50 backdrop-blur-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center">
-                <Clock className="w-4 h-4 mr-2 text-purple-400" />
-                <p className="text-sm text-purple-300">{mintStatus}</p>
-              </div>
+          <Card className="bg-black/60 border-purple-500/50 backdrop-blur-sm mb-4">
+            <CardContent className="p-4 flex items-center text-purple-300 text-sm">
+              <Clock className="w-4 h-4 mr-2" />
+              {mintStatus}
             </CardContent>
           </Card>
         )}
