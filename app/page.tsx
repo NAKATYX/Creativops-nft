@@ -2,29 +2,9 @@
 
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Wallet, ExternalLink, Zap, Users, Clock } from "lucide-react"
 import WalletConnectButton from "@/components/WalletConnect"
-
-// Extend window type to support Farcaster Mini-App
-declare global {
-  interface Window {
-    farcaster?: {
-      actions?: {
-        ready: () => void
-      }
-    }
-  }
-}
-
-interface MintData {
-  price: string
-  remaining: string
-  userMints: string
-  userBalance: string
-  totalSupply: number
-  maxSupply: number
-}
+import MintInformation from "@/components/mint-information"
 
 export default function CreativOpsMint() {
 
@@ -158,54 +138,8 @@ export default function CreativOpsMint() {
           </CardContent>
         </Card>
 
-        {/* Mint Data & Balance */}
-        <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
-          <CardContent className="p-6 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-purple-400">{mintData.price}</p>
-                <p className="text-xs text-gray-400">Mint Price</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-pink-400">{mintData.remaining.split(" / ")[0]}</p>
-                <p className="text-xs text-gray-400">Remaining</p>
-              </div>
-            </div>
-
-            {/* {wallet.connected && (
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-purple-500/20">
-                <div className="text-center">
-                  <p className="text-lg font-semibold text-green-400">{mintData.userMints}</p>
-                  <p className="text-xs text-gray-400">Your Mints</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-lg font-semibold text-blue-400">{mintData.userBalance}</p>
-                  <p className="text-xs text-gray-400">Your Balance</p>
-                </div>
-              </div>
-            )} */}
-          </CardContent>
-        </Card>
-
-        {/* Mint Button */}
-        {/* <div className="mb-6">
-          <Button
-            onClick={handleMint}
-            disabled={isMinting || !wallet.connected}
-            className="w-full h-14 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold text-lg rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isMinting ? (
-              <div className="flex items-center">
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
-                Minting...
-              </div>
-            ) : wallet.connected ? (
-              `MINT CreativOps NFT (${mintData.price})`
-            ) : (
-              "Connect Wallet to Mint"
-            )}
-          </Button>
-        </div> */}
+        {/* Mint Information */}
+        <MintInformation />
 
         {/* Wallet Connection */}
         <WalletConnectButton />
