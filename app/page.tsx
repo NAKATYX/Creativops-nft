@@ -1,10 +1,20 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { sdk } from "@farcaster/mini" // ✅ Required for Mini-Apps
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Wallet, ExternalLink, Zap, Users, Clock } from "lucide-react"
+
+// Extend window type to include farcaster
+declare global {
+  interface Window {
+    farcaster?: {
+      actions?: {
+        ready: () => void
+      }
+    }
+  }
+}
 
 interface MintData {
   price: string
@@ -40,9 +50,10 @@ export default function CreativOpsMint() {
   const [isMinting, setIsMinting] = useState(false)
   const [mintStatus, setMintStatus] = useState<string>("")
 
-  // ✅ Tell Farcaster we're ready after UI mounts
   useEffect(() => {
-    sdk.actions.ready()
+    if (typeof window !== "undefined" && window.farcaster?.actions?.ready) {
+      window.farcaster.actions.ready()
+    }
   }, [])
 
   const connectWallet = async () => {
@@ -125,7 +136,6 @@ export default function CreativOpsMint() {
       ></div>
 
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-md">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-3">
@@ -143,7 +153,6 @@ export default function CreativOpsMint() {
           </p>
         </div>
 
-        {/* Artwork Card */}
         <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
           <CardContent className="p-6">
             <div className="aspect-square bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-lg mb-4 flex items-center justify-center border border-purple-500/20">
@@ -173,7 +182,6 @@ export default function CreativOpsMint() {
           </CardContent>
         </Card>
 
-        {/* Mint Info */}
         <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
           <CardContent className="p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -202,7 +210,6 @@ export default function CreativOpsMint() {
           </CardContent>
         </Card>
 
-        {/* Mint Button */}
         <div className="mb-6">
           <Button
             onClick={handleMint}
@@ -222,7 +229,6 @@ export default function CreativOpsMint() {
           </Button>
         </div>
 
-        {/* Wallet Controls */}
         <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
           <CardContent className="p-4">
             {wallet.connected ? (
@@ -253,7 +259,6 @@ export default function CreativOpsMint() {
           </CardContent>
         </Card>
 
-        {/* Status Notification */}
         {mintStatus && (
           <Card className="bg-black/60 border-purple-500/50 backdrop-blur-sm">
             <CardContent className="p-4">
@@ -265,7 +270,6 @@ export default function CreativOpsMint() {
           </Card>
         )}
 
-        {/* Footer */}
         <div className="text-center mt-8 text-xs text-gray-500">
           <p>Powered by Monad Testnet</p>
           <div className="flex items-center justify-center mt-2">
