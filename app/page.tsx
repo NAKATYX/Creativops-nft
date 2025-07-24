@@ -50,17 +50,24 @@ export default function CreativOpsMint() {
   const [isMinting, setIsMinting] = useState(false)
   const [mintStatus, setMintStatus] = useState("")
 
-  // ✅ Notify Farcaster Mini-App is ready
+  // ✅ Notify Farcaster Mini-App is ready (with retry logic)
   useEffect(() => {
-    const ready = () => {
+    let attempts = 0
+    const maxAttempts = 10
+    const interval = setInterval(() => {
       if (typeof window !== "undefined" && window.farcaster?.actions?.ready) {
-        console.log("✅ Farcaster Mini-App ready")
         window.farcaster.actions.ready()
+        console.log("✅ Farcaster Mini-App ready")
+        clearInterval(interval)
       } else {
-        console.warn("⚠️ Farcaster window.farcaster not found")
+        attempts++
+        if (attempts >= maxAttempts) {
+          console.warn("⚠️ Farcaster window.farcaster not found after retries")
+          clearInterval(interval)
+        }
       }
-    }
-    setTimeout(ready, 0)
+    }, 200)
+    return () => clearInterval(interval)
   }, [])
 
   const connectWallet = async () => {
