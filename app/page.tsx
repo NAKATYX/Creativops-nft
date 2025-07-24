@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { sdk } from "@farcaster/mini" // ✅ Required for Mini-Apps
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Wallet, ExternalLink, Zap, Users, Clock } from "lucide-react"
@@ -39,11 +40,13 @@ export default function CreativOpsMint() {
   const [isMinting, setIsMinting] = useState(false)
   const [mintStatus, setMintStatus] = useState<string>("")
 
-  // Simulate wallet connection
+  // ✅ Tell Farcaster we're ready after UI mounts
+  useEffect(() => {
+    sdk.actions.ready()
+  }, [])
+
   const connectWallet = async () => {
     setMintStatus("Connecting wallet...")
-
-    // Simulate connection delay
     await new Promise((resolve) => setTimeout(resolve, 1500))
 
     setWallet({
@@ -63,11 +66,7 @@ export default function CreativOpsMint() {
   }
 
   const disconnectWallet = () => {
-    setWallet({
-      connected: false,
-      address: "",
-      balance: "0",
-    })
+    setWallet({ connected: false, address: "", balance: "0" })
     setMintData((prev) => ({
       ...prev,
       userBalance: "0 MON",
@@ -88,16 +87,12 @@ export default function CreativOpsMint() {
     setMintStatus("Preparing transaction...")
 
     try {
-      // Simulate transaction steps
       await new Promise((resolve) => setTimeout(resolve, 1000))
       setMintStatus("Confirming transaction...")
-
       await new Promise((resolve) => setTimeout(resolve, 2000))
       setMintStatus("Minting your CreativOps NFT...")
-
       await new Promise((resolve) => setTimeout(resolve, 2000))
 
-      // Update mint data
       setMintData((prev) => ({
         ...prev,
         remaining: `${10000 - (prev.totalSupply + 1)} / 10000`,
@@ -120,9 +115,7 @@ export default function CreativOpsMint() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black text-white">
-      {/* Background Effects */}
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black"></div>
-      {/* Subtle dot-grid background pattern */}
       <div
         className="fixed inset-0 pointer-events-none"
         style={{
@@ -145,7 +138,9 @@ export default function CreativOpsMint() {
               <p className="text-sm text-gray-400">Melobanc Labs</p>
             </div>
           </div>
-          <p className="text-gray-300 text-sm">Claim your CreativOps Genesis NFT — 10k drop on Monad Testnet</p>
+          <p className="text-gray-300 text-sm">
+            Claim your CreativOps Genesis NFT — 10k drop on Monad Testnet
+          </p>
         </div>
 
         {/* Artwork Card */}
@@ -161,7 +156,6 @@ export default function CreativOpsMint() {
               </div>
             </div>
 
-            {/* Progress Bar */}
             <div className="mb-4">
               <div className="flex justify-between text-xs text-gray-400 mb-2">
                 <span>Minted</span>
@@ -179,7 +173,7 @@ export default function CreativOpsMint() {
           </CardContent>
         </Card>
 
-        {/* Mint Information */}
+        {/* Mint Info */}
         <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
           <CardContent className="p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
@@ -228,7 +222,7 @@ export default function CreativOpsMint() {
           </Button>
         </div>
 
-        {/* Wallet Connection */}
+        {/* Wallet Controls */}
         <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
           <CardContent className="p-4">
             {wallet.connected ? (
@@ -259,7 +253,7 @@ export default function CreativOpsMint() {
           </CardContent>
         </Card>
 
-        {/* Status Messages */}
+        {/* Status Notification */}
         {mintStatus && (
           <Card className="bg-black/60 border-purple-500/50 backdrop-blur-sm">
             <CardContent className="p-4">
