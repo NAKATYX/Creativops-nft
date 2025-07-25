@@ -1,7 +1,6 @@
 import { createConfig, http } from "wagmi";
 import { injected, metaMask } from "wagmi/connectors";
 import { Chain, createClient } from "viem";
-import { ALCHEMY_RPC_URL } from "@/keys";
 
 export const monadTestnet: Chain = {
   id: 10143,
@@ -13,10 +12,10 @@ export const monadTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: [ALCHEMY_RPC_URL],
+      http: [process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL],
     },
     default: {
-      http: [ALCHEMY_RPC_URL],
+      http: [process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL],
     },
   },
   blockExplorers: {
