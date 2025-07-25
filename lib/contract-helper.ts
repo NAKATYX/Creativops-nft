@@ -13,3 +13,12 @@ export const weiToEthers = (
     return "0";
   }
 };
+
+export const formatBalance = (weiValue: bigint | undefined, decimals = 4) => {
+  if (!weiValue) return "0.0000";
+  const ethValue = formatEther(weiValue);
+  return parseFloat(ethValue).toLocaleString(undefined, {
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+  });
+};
