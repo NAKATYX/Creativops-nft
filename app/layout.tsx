@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { WagmiProvider } from 'wagmi'
+import { wagmiConfig } from '@/config/wagmi'
+import { WagmiAppProvider } from '@/components/wagmi-app-provider'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'CreativOps',
+  description: 'Genesis mint for the CreativOps NFT collection',
 }
 
 export default function RootLayout({
@@ -14,7 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body suppressHydrationWarning>
+        <WagmiAppProvider>
+          {children}
+        </WagmiAppProvider>
+      </body>
     </html>
   )
 }
