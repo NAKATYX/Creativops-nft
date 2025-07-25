@@ -1,11 +1,19 @@
 "use client"
 
 import useContract from '@/hooks/useContract'
+import { useEventBus } from '@/store/events-bus'
 import React from 'react'
 
 const ProgressBar = () => {
 
-    const { data: supply, isPending, isError } = useContract('totalSupply')
+    const { data: supply, isPending, refetch } = useContract('totalSupply')
+    const { isDirty } = useEventBus()
+
+    React.useEffect(() => {
+        if (isDirty) {
+            refetch()
+        }
+    }, [isDirty])
 
     return (
         <div className="mb-4" >
@@ -18,7 +26,7 @@ const ProgressBar = () => {
             <div className="w-full bg-gray-800 rounded-full h-2">
                 <div
                     className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${parseInt(supply?.toString() as string) / 10000 * 100}%` }}
+                    style={{ width: `${(parseInt(supply?.toString() as string) / 10000) * 100}%` }}
                 ></div>
             </div>
         </div >

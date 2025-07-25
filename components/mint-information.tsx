@@ -1,21 +1,34 @@
 "use client"
-import { useAccount, useBalance, useReadContract } from 'wagmi'
+import { useAccount, useBalance } from 'wagmi'
 import { Card, CardContent } from './ui/card'
 import { useEffect, useState } from 'react'
 import useContract from '@/hooks/useContract'
-import { getBalance } from 'viem/actions'
-import { contractConfig } from '@/config/contract'
-import { weiToEthers } from '@/lib/contract-helper'
+import { formatBalance, weiToEthers } from '@/lib/contract-helper'
+import { useEventBus } from '@/store/events-bus'
 
 const MintInformation = () => {
     const { isConnected, address } = useAccount()
-    const { data: balance } = useBalance({ ...contractConfig })
+    const { data: balance, refetch: refetchNativeBalance } = useBalance({ address })
 
-    const { data: totalSupply, error, isPending } = useContract('totalSupply')
+    const { isDirty, markBalanceClean } = useEventBus()
+
+    const { data: totalSupply, error, isPending, refetch: refetchSupply } = useContract('totalSupply')
     const { data: price, error: priceError } = useContract('price')
-    const { data: tokenBalance } = useContract('balanceOf', [address])
+    const { data: tokenBalance, refetch: refetchBalance } = useContract('balanceOf', [address])
 
     useEffect(() => console.log({ error, priceError }), [error, priceError])
+
+    useEffect(() => {
+        if (isDirty) {
+            console.log({ received: "Status indicating a refetch is needed" })
+            refetchSupply();
+            refetchBalance()
+            markBalanceClean()
+            refetchNativeBalance()
+
+            console.log({ totalSupply, tokenBalance, isPending, error })
+        }
+    }, [isDirty, isPending, error])
 
     return (
         <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
@@ -38,7 +51,7 @@ const MintInformation = () => {
                             <p className="text-xs text-gray-400">Your Mints</p>
                         </div>
                         <div className="text-center">
-                            <p className="text-lg font-semibold text-blue-400">{balance?.value.toLocaleString()} {balance?.symbol}</p>
+                            <p className="text-lg font-semibold text-blue-400">{formatBalance(balance?.value as bigint)} {balance?.symbol}</p>
                             <p className="text-xs text-gray-400">Your Balance</p>
                         </div>
                     </div>

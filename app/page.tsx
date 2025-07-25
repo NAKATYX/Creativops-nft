@@ -6,82 +6,9 @@ import { Wallet, ExternalLink, Zap, Users, Clock } from "lucide-react"
 import WalletConnectButton from "@/components/WalletConnect"
 import MintInformation from "@/components/mint-information"
 import ProgressBar from "@/components/progress-bar"
+import MintButton from "@/components/mint-button"
 
 export default function CreativOpsMint() {
-
-
-  const [mintData, setMintData] = useState<MintData>({
-    price: "0.1 MON",
-    remaining: "9850 / 10000",
-    userMints: "0 / 10",
-    userBalance: "0 MON",
-    totalSupply: 150,
-    maxSupply: 10000,
-  })
-
-  const [isMinting, setIsMinting] = useState(false)
-  const [mintStatus, setMintStatus] = useState("")
-
-  // ✅ Notify Farcaster Mini-App is ready (with retry logic)
-  useEffect(() => {
-    let attempts = 0
-    const maxAttempts = 10
-    const interval = setInterval(() => {
-      if (typeof window !== "undefined" && window.farcaster?.actions?.ready) {
-        window.farcaster.actions.ready()
-        console.log("✅ Farcaster Mini-App ready")
-        clearInterval(interval)
-      } else {
-        attempts++
-        if (attempts >= maxAttempts) {
-          console.warn("⚠️ Farcaster window.farcaster not found after retries")
-          clearInterval(interval)
-        }
-      }
-    }, 200)
-    return () => clearInterval(interval)
-  }, [])
-
-  const handleMint = async () => {
-    // if (!wallet.connected) {
-    //   setMintStatus("Please connect your wallet first")
-    //   setTimeout(() => setMintStatus(""), 3000)
-    //   return
-    // }
-
-    // setIsMinting(true)
-    // setMintStatus("Preparing transaction...")
-
-    // try {
-    //   // Simulate transaction steps
-    //   await new Promise((resolve) => setTimeout(resolve, 1000))
-    //   setMintStatus("Confirming transaction...")
-
-    //   await new Promise((resolve) => setTimeout(resolve, 2000))
-    //   setMintStatus("Minting your CreativOps NFT...")
-
-    //   await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    //   // Update mint data
-    //   setMintData((prev) => ({
-    //     ...prev,
-    //     remaining: `${10000 - (prev.totalSupply + 1)} / 10000`,
-    //     totalSupply: prev.totalSupply + 1,
-    //     userMints: "3 / 10",
-    //     userBalance: "1.3321 MON",
-    //   }))
-
-    //   setMintStatus("🎉 Successfully minted CreativOps NFT!")
-    //   setTimeout(() => setMintStatus(""), 5000)
-    // } catch (error) {
-    //   setMintStatus("❌ Transaction failed. Please try again.")
-    //   setTimeout(() => setMintStatus(""), 5000)
-    // } finally {
-    //   setIsMinting(false)
-    // }
-  }
-
-  const progressPercentage = (mintData.totalSupply / mintData.maxSupply) * 100
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black text-white">
@@ -115,13 +42,7 @@ export default function CreativOpsMint() {
         <Card className="bg-black/40 border-purple-500/30 backdrop-blur-sm mb-6">
           <CardContent className="p-6">
             <div className="aspect-square bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-lg mb-4 flex items-center justify-center border border-purple-500/20">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-3 flex items-center justify-center">
-                  <Users className="w-8 h-8 text-white" />
-                </div>
-                <p className="text-purple-300 font-semibold">CreativOps OG</p>
-                <p className="text-xs text-gray-400">Genesis Collection</p>
-              </div>
+              <img src="https://ipfs.io/ipfs/bafybeietjunj777cocic7kz3rvfy6arigpbi7e4dytgwzpumqunlcesht4" className="h-auto w-full object-cover" />
             </div>
 
             <ProgressBar />
@@ -131,20 +52,22 @@ export default function CreativOpsMint() {
         {/* Mint Information */}
         <MintInformation />
 
+        <MintButton />
+
         {/* Wallet Connection */}
         <WalletConnectButton />
 
-        {/* Mint Status */}
-        {
-          mintStatus && (
-            <Card className="bg-black/60 border-purple-500/50 backdrop-blur-sm mb-4">
-              <CardContent className="p-4 flex items-center text-purple-300 text-sm">
-                <Clock className="w-4 h-4 mr-2" />
-                {mintStatus}
-              </CardContent>
-            </Card>
-          )
-        }
+        {/* Status Messages */}
+        {/* {mintStatus && (
+          <Card className="bg-black/60 border-purple-500/50 backdrop-blur-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center">
+                <Clock className="w-4 h-4 mr-2 text-purple-400" />
+                <p className="text-sm text-purple-300">{mintStatus}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )} */}
 
         <div className="text-center mt-8 text-xs text-gray-500">
           <p>Powered by Monad Testnet</p>
