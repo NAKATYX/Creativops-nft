@@ -1,8 +1,8 @@
 import creativops from "@/abi/creativops.json";
-import { sepolia } from "viem/chains";
+import { monadTestnet, sepolia } from "viem/chains";
 
 export const contractConfig = {
-  address: "0xad5D0dB63707b3F27AbC79D157C09ED3E1536448",
+  address: "0x43e9ED9e357908D7e52CB8C34E0c4c4A77e3b97D",
   abi: creativops.abi,
-  chainId: sepolia.id,
+  chainId: monadTestnet.id,
 } as const;

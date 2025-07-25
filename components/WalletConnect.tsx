@@ -3,7 +3,8 @@
 import { Card, CardContent } from './ui/card'
 import { Button } from './ui/button'
 import { Wallet } from 'lucide-react'
-import { injected, useAccount, useConnect, useDisconnect } from 'wagmi'
+import { injected, useAccount, useConnect, useDisconnect, useSwitchChain } from 'wagmi'
+import { monadTestnet } from 'viem/chains'
 
 
 interface WalletState {
@@ -20,7 +21,7 @@ const WalletConnectButton = () => {
 
     // Simulate wallet connection
     const connectWallet = async () => {
-        connect({ connector: injected() })
+        connect({ connector: injected(), chainId: monadTestnet.id })
     }
 
     return (

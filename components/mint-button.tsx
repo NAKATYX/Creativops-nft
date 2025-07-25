@@ -53,7 +53,7 @@ const MintButton = () => {
                         {isConfirming ? 'Confirming...' : 'Minting...'}
                     </div>
                 ) : isConnected ? (
-                    pricePending ? "Fetching price..." : priceError ? "Failed to fetch price" : `MINT CreativOps NFT (${weiToEthers(price as string)} ETH)`
+                    pricePending ? "Fetching price..." : priceError ? "Failed to fetch price" : `MINT CreativOps NFT (${weiToEthers(price as string)} MON)`
                 ) : (
                     "Connect Wallet to Mint"
                 )}

@@ -35,7 +35,7 @@ const MintInformation = () => {
             <CardContent className="p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                     <div className="text-center">
-                        <p className="text-2xl font-bold text-purple-400">{priceError ? "??" : weiToEthers(price?.toString() as string)} ETH</p>
+                        <p className="text-2xl font-bold text-purple-400">{priceError ? "??" : weiToEthers(price?.toString() as string)} MON</p>
                         <p className="text-xs text-gray-400">Mint Price</p>
                     </div>
                     <div className="text-center">
