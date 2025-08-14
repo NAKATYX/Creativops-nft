@@ -1,7 +1,10 @@
-import { createConfig, http } from "wagmi";
-import { injected, metaMask } from "wagmi/connectors";
-import { Chain, createClient } from "viem";
+"use client"
 
+import { createConfig, http } from "wagmi"
+import { Chain } from "viem"
+import { farcasterMiniApp } from "@farcaster/miniapp-wagmi-connector"
+
+// ✅ Define Monad Testnet chain
 export const monadTestnet: Chain = {
   id: 10143,
   name: "Monad Testnet",
@@ -12,10 +15,10 @@ export const monadTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: [process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL],
+      http: [process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL!],
     },
     default: {
-      http: [process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL],
+      http: [process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL!],
     },
   },
   blockExplorers: {
@@ -25,13 +28,15 @@ export const monadTestnet: Chain = {
     },
   },
   testnet: true,
-};
+}
 
 export const wagmiConfig = createConfig({
   chains: [monadTestnet],
-  client({ chain }) {
-    return createClient({ chain, transport: http() });
+  transports: {
+    [monadTestnet.id]: http(process.env.NEXT_PUBLIC_ALCHEMY_RPC_URL!),
   },
-  connectors: [injected(), metaMask()],
+  connectors: [
+    farcasterMiniApp(), // Farcaster Mini-App connector
+  ],
   ssr: true,
-});
+})
