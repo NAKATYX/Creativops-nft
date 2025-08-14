@@ -1,6 +1,8 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
+import { useEffect } from "react"
+import { sdk } from '@farcaster/miniapp-sdk'
 import { Wallet, ExternalLink, Zap } from "lucide-react"
 import ProgressBar from "@/components/progress-bar"
 import MintButton from "@/components/mint-button"
@@ -14,6 +16,13 @@ function truncateAddress(addr: string) {
 
 export default function CreativOpsMint() {
   const { address, isConnected } = useAccount()
+
+    // Ensure Farcaster Mini-App signals it's ready
+  useEffect(() => {
+    if (sdk?.actions?.ready) {
+      sdk.actions.ready()
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-purple-900/20 to-black text-white relative">
