@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { sdk } from "@farcaster/mini" // ✅ Required for Mini-Apps
+import { sdk } from '@farcaster/miniapp-sdk'
 import { Card, CardContent } from "@/components/ui/card"
 import { Wallet, ExternalLink, Zap, Users, Clock } from "lucide-react"
 import WalletConnectButton from "@/components/WalletConnect"
